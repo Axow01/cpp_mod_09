@@ -6,12 +6,11 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 16:46:04 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/12 14:39:15 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/12 16:31:16 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
-#include <string>
 
 bool	Dates::operator==(const Dates &rhs) const {
 	return (year == rhs.year && month == rhs.month && day == rhs.day);
@@ -29,6 +28,11 @@ BitcoinExchange::BitcoinExchange(std::string &filename) {
 }
 
 BitcoinExchange::~BitcoinExchange(void) {
+	if (_inputFile.is_open())
+		_inputFile.close();
+	if (_database.is_open())
+		_database.close();
+	_input.clear();
 }
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange &copy): _input(copy._input) {
@@ -83,3 +87,8 @@ void	BitcoinExchange::initMap(void) {
 		getDates(std::string(str), _input);
 	}
 }
+
+// float	BitcoinExchange::getPrice(std::map<Dates, float>::iterator &it) {
+// 	float	price = 0.0;
+
+// }

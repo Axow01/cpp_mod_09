@@ -6,7 +6,7 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 16:43:36 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/12 13:31:42 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/12 16:06:56 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,6 @@ int	main(int argc, char **argv) {
 	BitcoinExchange	exchange(input_file);
 
 	exchange.initMap();
+	exchange.initDatabaseMap();
 	return (0);
 }
