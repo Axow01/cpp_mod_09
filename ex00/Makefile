@@ -22,7 +22,7 @@ OBJS = $(patsubst %.cpp, bin/%.o, $(SRC))
 
 CC = c++
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98 -g
+CFLAGS = -Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
 
 # LIBFTPATH = includes/libft/
 
