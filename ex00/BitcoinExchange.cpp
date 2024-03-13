@@ -6,7 +6,7 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 16:46:04 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/12 16:31:16 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/12 21:59:28 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,75 @@ void	BitcoinExchange::initMap(void) {
 	}
 }
 
-// float	BitcoinExchange::getPrice(std::map<Dates, float>::iterator &it) {
-// 	float	price = 0.0;
+static Dates	convertDate(std::string date) {
+	Dates	cDate;
 
-// }
+	try {
+		cDate.year = std::stoi(date.substr(0, date.find('-')));
+		date.erase(0, date.find('-') + 1);
+		cDate.month = std::stoi(date.substr(0, date.find('-')));
+		date.erase(0, date.find('-') + 1);
+		cDate.day = std::stoi(date);
+		cDate.errorCode = 0;
+	} catch (std::exception &e) {
+		std::cout << e.what() << std::endl;
+	}
+	return (cDate);
+}
+
+static int	getDifference(Dates date, Dates dateDb) {
+	int	diff = 0;
+
+	if (date.year > dateDb.year)
+		diff += (date.year - dateDb.year) * 365;
+	else
+		diff += (dateDb.year - date.year) * 365;
+	if (date.month > dateDb.month)
+		diff += (date.month - dateDb.month) * 30;
+	else
+		diff += (dateDb.month - date.month) * 30;
+	diff += (date.day - dateDb.day);
+	return (diff);
+}
+
+float	BitcoinExchange::getPrice(std::map<Dates, float>::iterator &it) {
+	float	price = 0.0;
+	float	priced = 0.0;
+	char	str[255];
+	int	diff = 99999;
+
+	_database.clear();
+	_database.seekg(0);
+	while (!_database.fail()) {
+		_database.getline(str, 255, '\n');
+		std::string	r = str;
+		if (r == "date,exchange_rate")
+			continue;
+		if (r.empty())
+			break;
+		std::string	d = r.substr(0, ',');
+		r.erase(0, r.find(',') + 1);
+		Dates	date = convertDate(d);
+		price = std::stof(r);
+		if (date == (*it).first)
+			return ((*it).second * price);
+		else if (diff > getDifference(date, (*it).first)) {
+			diff = getDifference(date, (*it).first);
+			priced = price;
+		}
+	}
+	return ((*it).second * priced);
+}
+
+void	BitcoinExchange::printIn(void) {
+	for (std::map<Dates, float>::iterator it = _input.begin(); it != _input.end(); it++) {
+		if ((*it).first.errorCode == 0)
+			std::cout << (*it).first.year << "-" << (*it).first.month << "-" << (*it).first.day << " => " << (*it).second << " = " << getPrice(it) << std::endl;
+		else if ((*it).first.errorCode == 1)
+			std::cerr << "Error: bad input." << std::endl;
+		else if ((*it).first.errorCode == 2)
+			std::cerr << "Error: not a positive number." << std::endl;
+		else if ((*it).first.errorCode == 3)
+			std::cerr << "Error: too large number." << std::endl;
+	}
+}

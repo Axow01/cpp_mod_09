@@ -6,7 +6,7 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 16:46:14 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/12 16:31:31 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/12 21:18:54 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ class BitcoinExchange {
 		BitcoinExchange	&operator=(const BitcoinExchange &rhs);
 
 		void	initMap(void);
-		// float	getPrice(std::map<Dates, float>::iterator &it);
+		float	getPrice(std::map<Dates, float>::iterator &it);
+		void	printIn(void);
 };
 
 #endif
