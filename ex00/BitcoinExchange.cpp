@@ -6,18 +6,18 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 16:46:04 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/12 21:59:28 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/13 17:03:51 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 
 bool	Dates::operator==(const Dates &rhs) const {
-	return (year == rhs.year && month == rhs.month && day == rhs.day);
+	return (id == rhs.id);
 }
 
 bool	Dates::operator<(const Dates &rhs) const {
-	return (year <= rhs.year && month <= rhs.month && day <= rhs.day);
+	return (id < rhs.id);
 }
 
 BitcoinExchange::BitcoinExchange(std::string &filename) {
@@ -46,15 +46,17 @@ BitcoinExchange	&BitcoinExchange::operator=(const BitcoinExchange &rhs) {
 }
 
 static Dates	getDates(std::string str, std::map<Dates, float> &map) {
+	static int	id = -1;
 	Dates	date;
 	size_t	pos = str.find(" | ");
 
 	date.errorCode = 0;
+	date.id = ++id;
 	if (str.empty() || str == "date | value")
 		return (date);
 	if (pos == str.npos) {
 		date.errorCode = 1;
-		map[date] = 0;
+		map.insert(std::make_pair(date, 0));
 		return (date);
 	}
 	std::string	dateStr = str.substr(0, pos);
@@ -72,9 +74,9 @@ static Dates	getDates(std::string str, std::map<Dates, float> &map) {
 			date.errorCode = 3;
 		if (date.day <= 0 || date.day > 12 || date.month <= 0 || date.month > 12 || date.year <= 2008 || date.year > 2030)
 			date.errorCode = 1;
-		map[date] = val;
+		map.insert(std::make_pair(date, val));
 	} catch (std::exception &e) {
-		std::cout << e.what() << std::endl;
+		std::cout << "Error: " << e.what() << std::endl;
 	}
 	return (date);
 }
@@ -107,19 +109,29 @@ static Dates	convertDate(std::string date) {
 static int	getDifference(Dates date, Dates dateDb) {
 	int	diff = 0;
 
-	if (date.year > dateDb.year)
-		diff += (date.year - dateDb.year) * 365;
-	else
-		diff += (dateDb.year - date.year) * 365;
-	if (date.month > dateDb.month)
-		diff += (date.month - dateDb.month) * 30;
-	else
-		diff += (dateDb.month - date.month) * 30;
+	diff += (date.year - dateDb.year) * 365;
+	diff += (date.month - dateDb.month) * 30;
 	diff += (date.day - dateDb.day);
+	if (diff < 0)
+		std::cerr << "Error: diff is not positive!" << std::endl;
 	return (diff);
 }
 
-float	BitcoinExchange::getPrice(std::map<Dates, float>::iterator &it) {
+static bool	isLower(Dates dateInput, Dates dateDb) {
+	if (dateDb.year > dateInput.year)
+		return (false);
+	if ((dateDb.year == dateInput.year && dateDb.month > dateInput.month) || (dateDb.year == dateInput.year && dateDb.month == dateInput.month && dateDb.day >= dateInput.day))
+		return (false);
+	return (true);
+}
+
+static bool	isDateEqual(Dates d1, Dates d2) {
+	if (d1.year == d2.year && d1.month == d2.month && d1.day == d2.day)
+		return (true);
+	return (false);
+}
+
+double	BitcoinExchange::getPrice(std::map<Dates, float>::iterator &it) {
 	float	price = 0.0;
 	float	priced = 0.0;
 	char	str[255];
@@ -138,25 +150,39 @@ float	BitcoinExchange::getPrice(std::map<Dates, float>::iterator &it) {
 		r.erase(0, r.find(',') + 1);
 		Dates	date = convertDate(d);
 		price = std::stof(r);
-		if (date == (*it).first)
+		if (isDateEqual(date, (*it).first))
 			return ((*it).second * price);
-		else if (diff > getDifference(date, (*it).first)) {
-			diff = getDifference(date, (*it).first);
+		else if (isLower((*it).first, date) && diff > getDifference((*it).first, date)) {
+			diff = getDifference((*it).first, date);
 			priced = price;
 		}
 	}
+	std::cout.setf(std::ios::fixed, std::ios::floatfield);
+	std::cout.precision(2);
 	return ((*it).second * priced);
+}
+
+static std::string	formatDate(int date) {
+	std::string	dateStr = "0";
+
+	dateStr += std::to_string(date);
+	if (dateStr.length() > 2)
+		dateStr.erase(0, 1);
+	return (dateStr);
 }
 
 void	BitcoinExchange::printIn(void) {
 	for (std::map<Dates, float>::iterator it = _input.begin(); it != _input.end(); it++) {
 		if ((*it).first.errorCode == 0)
-			std::cout << (*it).first.year << "-" << (*it).first.month << "-" << (*it).first.day << " => " << (*it).second << " = " << getPrice(it) << std::endl;
+			std::cout << (*it).first.year << "-" << formatDate((*it).first.month) << "-" << formatDate((*it).first.day) << " => " << (*it).second << " = " << getPrice(it) << std::endl;
 		else if ((*it).first.errorCode == 1)
 			std::cerr << "Error: bad input." << std::endl;
 		else if ((*it).first.errorCode == 2)
 			std::cerr << "Error: not a positive number." << std::endl;
 		else if ((*it).first.errorCode == 3)
 			std::cerr << "Error: too large number." << std::endl;
+		std::cout.unsetf(std::ios::fixed);
+		std::cout.unsetf(std::ios::floatfield);
+		std::cout.precision(6);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 16:46:14 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/12 21:18:54 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/13 16:44:28 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <string>
 
 struct Dates {
+	int	id;
 	int	year;
 	int	month;
 	int	day;
@@ -41,7 +42,7 @@ class BitcoinExchange {
 		BitcoinExchange	&operator=(const BitcoinExchange &rhs);
 
 		void	initMap(void);
-		float	getPrice(std::map<Dates, float>::iterator &it);
+		double	getPrice(std::map<Dates, float>::iterator &it);
 		void	printIn(void);
 };
 
