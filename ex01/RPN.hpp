@@ -6,7 +6,7 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 18:09:32 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/13 18:54:27 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/14 16:33:17 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,10 @@ class RPN {
 
 		RPN	&operator=(const RPN &rhs);
 
-		int	solve(void) const;
+		int	solve(void);
 	private:
 		std::stack<int>	_rpn;
-		int				_operandCount;
-		int				_operatorCount;
+		std::string		_rawRPN;
 };
 
 #endif
