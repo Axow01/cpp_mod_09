@@ -6,7 +6,7 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 16:46:14 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/13 16:44:28 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/14 16:12:25 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,23 @@
 # include <map>
 # include <stdexcept>
 # include <string>
+
+typedef enum	e_month {
+	JAN = 31,
+	FEB = 28,
+	FEBL = 29,
+	MAR = 31,
+	APR = 30,
+	MAY = 31,
+	JUN = 30,
+	JUL = 31,
+	AUG = 31,
+	SEP = 30,
+	OCT = 31,
+	NOV = 30,
+	DEC = 31,
+	NONE = -1
+}		t_month;
 
 struct Dates {
 	int	id;

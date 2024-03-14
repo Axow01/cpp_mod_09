@@ -6,7 +6,7 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 16:46:04 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/13 17:03:51 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/14 16:15:05 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,38 @@ BitcoinExchange	&BitcoinExchange::operator=(const BitcoinExchange &rhs) {
 	return (*this);
 }
 
+static bool	checkLeapYear(const Dates &date) {
+	if (date.year % 4 == 0 || date.year % 400 == 0)
+		return (true);
+	return(false);
+}
+
+static bool	checkMonthDay(const Dates &date) {
+	t_month	month;
+
+	switch (date.month) {
+	case 1: month = JAN; break;
+	case 2: month = FEB; break;
+	case 3: month = MAR; break;
+	case 4: month = APR; break;
+	case 5: month = MAY; break;
+	case 6: month = JUN; break;
+	case 7: month = JUL; break;
+	case 8: month = AUG; break;
+	case 9: month = SEP; break;
+	case 10: month = OCT; break;
+	case 11: month = NOV; break;
+	case 12: month = DEC; break;
+	default: month = NONE;
+	}
+	if (checkLeapYear(date))
+		month = FEBL;
+	std::cout << "Month: " << month << std::endl;
+	if (month != NONE && date.day <= month && date.day > 0)
+		return (true);
+	return (false);
+}
+
 static Dates	getDates(std::string str, std::map<Dates, float> &map) {
 	static int	id = -1;
 	Dates	date;
@@ -68,11 +100,11 @@ static Dates	getDates(std::string str, std::map<Dates, float> &map) {
 		pos = dateStr.find('-', pos + 1);
 		date.day = std::stoi(dateStr.substr(pos + 1, 2));
 		float	val = std::stof(str.substr(0, 4));
-		if (val < 0)
+		if (val < 0 || val == -0)
 			date.errorCode = 2;
 		else if (val > 1000)
 			date.errorCode = 3;
-		if (date.day <= 0 || date.day > 12 || date.month <= 0 || date.month > 12 || date.year <= 2008 || date.year > 2030)
+		if (date.year <= 2008 || !checkMonthDay(date))
 			date.errorCode = 1;
 		map.insert(std::make_pair(date, val));
 	} catch (std::exception &e) {
