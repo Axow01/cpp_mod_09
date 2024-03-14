@@ -6,7 +6,7 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 18:09:05 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/14 17:06:46 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/14 19:38:38 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,12 @@ int	main(int argc, char **argv) {
 	}
 	std::string	w;
 	w = createStringFromArgs(argv, argc);
-	RPN	rpn(w);
+	try {
+		RPN	rpn(w);
+		std::cout << rpn.solve() << std::endl;
+	} catch (std::exception &e) {
+		std::cout << e.what() << std::endl;
+	}
 
-	std::cout << rpn.solve() << std::endl;
 	return (0);
 }
