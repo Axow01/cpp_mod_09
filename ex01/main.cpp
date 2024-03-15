@@ -6,7 +6,7 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 18:09:05 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/14 19:38:38 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/15 17:49:37 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ static std::string	createStringFromArgs(char **argv, int ac) {
 		str.erase(pos, 1);
 		pos = str.find(' ');
 	}
-	std::cout << str << std::endl;
 	return (str);
 }
 
