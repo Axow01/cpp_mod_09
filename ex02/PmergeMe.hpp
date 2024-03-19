@@ -6,7 +6,7 @@
 /*   By: mmarcott <mmarcott@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 17:53:13 by mmarcott          #+#    #+#             */
-/*   Updated: 2024/03/15 18:55:55 by mmarcott         ###   ########.fr       */
+/*   Updated: 2024/03/19 17:17:26 by mmarcott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,25 @@ class PmergeMe {
 		std::deque<int>		getDeque(void) const;
 		std::time_t			getStartedTime(void) const;
 		void				sortVector(void);
+		void				sortDeque(void);
+		double				getTimedUsed(void);
+		double				getTimeSpentVector(void) const;
+		double				getTimeSpentDeque(void) const;
 	private:
+		int					insertionSort(std::vector<int> &s, int nb, int L, int R);
+		int					insertionSortDeque(std::deque<int> &s, int nb, int L, int R);
 		void				parseRawSequenceVector(void);
+		void				parseRawSequenceDeque(void);
+		std::vector<int>	&completeSort(std::vector<int> &s);
 		std::string			_rawSequence;
-		std::time_t			_timeStartedOperation;
+		std::string			_rawSequenceDeque;
+		std::clock_t		_timeStartedOperation;
 		std::vector<int>	_vector;
 		std::deque<int>		_deque;
+		double				_timeSpentVector;
+		double				_timeSpentDeque;
 };
+
+void	printVect(std::vector<int> s);
 
 #endif
